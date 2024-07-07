@@ -57,9 +57,28 @@
                 display: block;
             }
         }
+        .container {
+            display: flex;
+            height: calc(100vh - 60px); /* Adjust based on header height */
+        }
         #viewDiv {
-            height: 100vh; /* Adjust as needed */
+            flex: 3;
+            height: 100%;
             width: 100%;
+        }
+        .search-container {
+            flex: 1;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-left: 1px solid #dee2e6;
+            overflow-y: auto;
+        }
+        .search-container input, .search-container button, .search-container select {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            font-size: 1em;
         }
     </style>
 
@@ -75,7 +94,11 @@
             "esri/views/MapView",
             "esri/widgets/Locate",
             "esri/widgets/Search",
-        ], (esriConfig, Map, MapView, Locate, Search) => {
+            "esri/widgets/LayerList",
+            "esri/layers/FeatureLayer",
+            "esri/widgets/BasemapGallery",
+            "esri/widgets/Expand"
+        ], (esriConfig, Map, MapView, Locate, Search, LayerList, FeatureLayer, BasemapGallery, Expand) => {
 
             // setting the api key
             esriConfig.apiKey = "AAPK572c05ffa05d46a2aaf199b16ffb4221oE24c7wpfEvr0IwIzITaPNpdCYGeE71pjVNgO0grx1V-RUKdhR87ctV8qxm5rAB_";
@@ -87,8 +110,8 @@
             const view = new MapView({
                 container: "viewDiv", // Reference to the DOM node that will contain the view
                 map: map, // References the map object
-                center: [-89.4008, 43.0722], // Longitude and Latitude centered on madison wi
-                zoom: 11 // zoom level set to city-ish wide scale
+                center: [-89.4008, 43.0722], // Longitude and Latitude Boneyard at Davis Monthan Air Force Base in Arizona
+                zoom: 11 // Zoom level
             });
 
             const locateBtn = new Locate({
@@ -120,8 +143,20 @@
         </nav>
     </header>
 
-    <!-- Map view container -->
-    <div id="viewDiv"></div>
+    <div class="container">
+        <div id="viewDiv"></div>
+        <div class="search-container">
+            <input type="text" placeholder="Search by city, state or zip">
+            <button type="button">Sort By: Time</button>
+            <button type="button">Sort By: Distance</button>
+            <select>
+                <option value="all">Filter By:</option>
+                <option value="order1">Order 1</option>
+                <option value="order2">Order 2</option>
+                <!-- Add more filter options as needed -->
+            </select>
+        </div>
+    </div>
 
     <script>
         function toggleMenu() {
