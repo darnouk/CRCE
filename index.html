@@ -117,113 +117,127 @@
 
     <!-- loading the modules -->
     <script>
-        require([
-            "esri/config",
-            "esri/Map",
-            "esri/views/MapView",
-            "esri/widgets/Locate",
-            "esri/widgets/Search",
-            "esri/layers/FeatureLayer"
-        ], (esriConfig, Map, MapView, Locate, Search, FeatureLayer) => {
+require([
+    "esri/config",
+    "esri/Map",
+    "esri/views/MapView",
+    "esri/widgets/Locate",
+    "esri/widgets/Search",
+    "esri/layers/FeatureLayer",
+    "esri/renderers/UniqueValueRenderer"
+], (esriConfig, Map, MapView, Locate, Search, FeatureLayer, UniqueValueRenderer) => {
 
-            // setting the api key to mine
-            esriConfig.apiKey = "AAPK572c05ffa05d46a2aaf199b16ffb4221oE24c7wpfEvr0IwIzITaPNpdCYGeE71pjVNgO0grx1V-RUKdhR87ctV8qxm5rAB_";
+    // setting the api key to mine
+    esriConfig.apiKey = "AAPK572c05ffa05d46a2aaf199b16ffb4221oE24c7wpfEvr0IwIzITaPNpdCYGeE71pjVNgO0grx1V-RUKdhR87ctV8qxm5rAB_";
 
-            const map = new Map({
-                basemap: "streets-navigation-vector" // the best basemap
-            });
+    const map = new Map({
+        basemap: "streets-navigation-vector" // the best basemap
+    });
 
-            const view = new MapView({
-                container: "viewDiv", // Reference to the DOM node that will contain the view
-                map: map, // References the map object
-                center: [-98.5795, 39.8283], // long lat of center usa 
-                zoom: 4 // Zoom level
-            });
+    const view = new MapView({
+        container: "viewDiv", // Reference to the DOM node that will contain the view
+        map: map, // References the map object
+        center: [-98.5795, 39.8283], // long lat of center usa 
+        zoom: 4 // Zoom level
+    });
 
-            const locateBtn = new Locate({ // add locate widget button to map
-                view
-            });
+    const locateBtn = new Locate({ // add locate widget button to map
+        view
+    });
 
-            view.ui.add(locateBtn, "top-left");
+    view.ui.add(locateBtn, "top-left");
 
-            const search = new Search({ // add search widget to map
-                view
-            });
+    const search = new Search({ // add search widget to map
+        view
+    });
 
-            view.ui.add(search, {
-                position: "manual" // added to a manual position defined below
-            });
+    view.ui.add(search, {
+        position: "manual" // added to a manual position defined below
+    });
 
-            const featureLayer = new FeatureLayer({ // adding the feature layer containing the data to the map
-                url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/survey123_944c918b0be1473582ade462dd792fe2/FeatureServer"
-            });
+    // Define the UniqueValueRenderer
+    const renderer = new UniqueValueRenderer({
+        field: "religious_order",
+        uniqueValueInfos: [
+            { value: "Augustinian", symbol: { type: "simple-marker", color: "red", size: 8 } },
+            { value: "Barnabite", symbol: { type: "simple-marker", color: "orange", size: 8 } },
+            { value: "Benedictine", symbol: { type: "simple-marker", color: "yellow", size: 8 } },
+            { value: "Camilian", symbol: { type: "simple-marker", color: "green", size: 8 } },
+            { value: "Capuchin Franciscan", symbol: { type: "simple-marker", color: "blue", size: 8 } },
+            { value: "Carmelite", symbol: { type: "simple-marker", color: "indigo", size: 8 } },
+            { value: "Carthusian", symbol: { type: "simple-marker", color: "violet", size: 8 } },
+            { value: "Cistercian", symbol: { type: "simple-marker", color: "purple", size: 8 } },
+            { value: "Conventual Franciscan", symbol: { type: "simple-marker", color: "pink", size: 8 } },
+            { value: "Dominican", symbol: { type: "simple-marker", color: "brown", size: 8 } },
+            { value: "Franciscan", symbol: { type: "simple-marker", color: "gray", size: 8 } },
+            { value: "Jesuit", symbol: { type: "simple-marker", color: "cyan", size: 8 } },
+            { value: "Mercedarian", symbol: { type: "simple-marker", color: "magenta", size: 8 } },
+            { value: "Servite", symbol: { type: "simple-marker", color: "teal", size: 8 } },
+            { value: "Trappist", symbol: { type: "simple-marker", color: "olive", size: 8 } },
+            { value: "Trinitarian", symbol: { type: "simple-marker", color: "lime", size: 8 } }
+        ]
+    });
 
-            map.add(featureLayer);
+    const featureLayer = new FeatureLayer({
+        url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/survey123_944c918b0be1473582ade462dd792fe2/FeatureServer",
+        renderer: renderer // Apply the renderer here
+    });
 
-            // Move the search widget to the search-container
-            const searchContainer = document.querySelector('.search-container');
-            searchContainer.appendChild(search.domNode);
+    map.add(featureLayer);
 
-            // Filter functionality to filter by religious order
-            document.getElementById('filter-select').addEventListener('change', function(event) {
-                const selectedValue = event.target.value;
-                if (selectedValue === "all") {
-                    featureLayer.definitionExpression = "";
-                } else {
-                    featureLayer.definitionExpression = `religious_order = '${selectedValue}'`;
-                }
-            });
+    // Move the search widget to the search-container
+    const searchContainer = document.querySelector('.search-container');
+    searchContainer.appendChild(search.domNode);
 
-            // Click event listener for feature layer
-            view.on("click", function(event) {
-                view.hitTest(event).then(function(response) {
-                    const results = response.results;
-                    if (results.length > 0 && results[0].graphic) {
-                        const attributes = results[0].graphic.attributes;
-                        console.log('Attributes:', attributes); // Detailed log of all attributes
+    // Filter functionality to filter by religious order
+    document.getElementById('filter-select-order').addEventListener('change', function(event) {
+        const selectedValue = event.target.value;
+        if (selectedValue === "all") {
+            featureLayer.definitionExpression = "";
+        } else {
+            featureLayer.definitionExpression = `religious_order = '${selectedValue}'`;
+        }
+    });
 
-                        // Verify each attribute individually
-                        const communityName = attributes.community_name;
-                        const religiousOrder = attributes.religious_order;
-                        const communityWebsite = attributes.community_website;
+    // Filter functionality to filter by visitability
+    document.getElementById('filter-select-visitable').addEventListener('change', function(event) {
+        const selectedValue = event.target.value;
+        if (selectedValue === "all") {
+            featureLayer.definitionExpression = "";
+        } else {
+            featureLayer.definitionExpression = `visitable = '${selectedValue}'`;
+        }
+    });
 
-                        console.log('Community Name:', communityName); // Log Community Name
-                        console.log('Religious Order:', religiousOrder); // Log Religious Order
-                        console.log('Community Website:', communityWebsite); // Log Community Website
+    // Add popup template to feature layer
+    featureLayer.popupTemplate = {
+        title: "{community_name}",
+        content: `
+            <b>Community Name:</b> {community_name}<br>
+            <b>Order:</b> {religious_order}<br>
+            <b>Visitable?</b> {visitable}<br>
+            <b>Website:</b> <a href="{community_website}" target="_blank">{community_website}</a>
+        `
+    };
 
-                        // Ensure the retrieved attributes are not undefined or null
-                        const displayedCommunityName = communityName ? communityName : 'No Name';
-                        const displayedReligiousOrder = religiousOrder ? religiousOrder : 'No Order';
-                        const displayedCommunityWebsite = communityWebsite ? communityWebsite : 'No Website';
-
-                        // Create a div to show the results
-                        const resultDiv = document.createElement('div');
-                        resultDiv.className = 'result-item';
-                        resultDiv.innerHTML = `
-                            <strong>${displayedCommunityName}</strong><br>
-                            Order: ${displayedReligiousOrder}<br>
-                            Website: <a href="${displayedCommunityWebsite !== 'No Website' ? displayedCommunityWebsite : '#'}" target="_blank">${displayedCommunityWebsite}</a>
-                        `;
-
-                        // Clear previous results and add new results
-                        const previousResults = document.querySelector('.results-container');
-                        if (previousResults) {
-                            searchContainer.removeChild(previousResults);
-                        }
-
-                        const resultsContainer = document.createElement('div');
-                        resultsContainer.className = 'results-container';
-                        resultsContainer.appendChild(resultDiv);
-                        searchContainer.appendChild(resultsContainer);
-                    } else {
-                        console.log('No graphic found at the clicked location');
-                    }
-                }).catch(function(error) {
-                    console.error('Error in hitTest:', error);
+    // Click event listener for feature layer
+    view.on("click", function(event) {
+        view.hitTest(event).then(function(response) {
+            const results = response.results;
+            if (results.length > 0 && results[0].graphic) {
+                view.popup.open({
+                    location: event.mapPoint, // location of the click on the map
+                    features: [results[0].graphic] // assign the feature that was clicked
                 });
-            });
-
+            } else {
+                console.log('No graphic found at the clicked location');
+            }
+        }).catch(function(error) {
+            console.error('Error in hitTest:', error);
         });
+    });
+
+});
 
         function toggleMenu() { // function to toggle the menu on mobile
             var navLinks = document.getElementById("navLinks"); // variable to store the nav links
@@ -252,8 +266,8 @@
         <div class="search-container">
             <!-- filter menu for the religious orders in alphabetical order -->
             <div class="filter-section">
-                <label for="filter-select" class="filter-label">Filter By:</label>
-                <select id="filter-select" class="filter-select">
+                <label for="filter-select-order" class="filter-label">Filter By Order:</label>
+                <select id="filter-select-order" class="filter-select">
                     <option value="all">All</option>
                     <option value="Augustinian">Augustinian</option>
                     <option value="Barnabite">Barnabite</option>
@@ -271,6 +285,15 @@
                     <option value="Servite">Servite</option>
                     <option value="Trappist">Trappist</option>
                     <option value="Trinitarian">Trinitarian</option>
+                </select>
+            </div>
+            <!-- filter menu for visitability -->
+            <div class="filter-section">
+                <label for="filter-select-visitable" class="filter-label">Filter By Visitability:</label>
+                <select id="filter-select-visitable" class="filter-select">
+                    <option value="all">All</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
                 </select>
             </div>
         </div>
