@@ -1,9 +1,156 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>About CRCE</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Catholic Religious Communities Explorer</title>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.26/esri/themes/light/main.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+        }
+        .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        .logo a {
+            text-decoration: none;
+            color: white;
+        }
+        .nav-links {
+            display: flex;
+            gap: 15px;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: white;
+            font-size: 1em;
+        }
+        .menu-icon {
+            display: none;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+        @media (max-width: 600px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                gap: 10px;
+                width: 100%;
+                text-align: center;
+                background-color: #007bff;
+            }
+            .nav-links a {
+                padding: 10px 0;
+                border-top: 1px solid white;
+            }
+            .menu-icon {
+                display: block;
+            }
+        }
+        .container {
+            padding: 20px;
+        }
+        .content {
+            max-width: 800px;
+            margin: auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .contact-form {
+            margin-top: 20px;
+        }
+        .contact-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .contact-form input, .contact-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .contact-form button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .contact-form button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <script>
+        function toggleMenu() {
+            var navLinks = document.getElementById("navLinks");
+            if (navLinks.style.display === "flex") {
+                navLinks.style.display = "none";
+            } else {
+                navLinks.style.display = "flex";
+            }
+        }
+    </script>
 </head>
 <body>
-    <h1>Hello, World!</h1>
+    <header class="header">
+        <div class="logo">
+            <a href="index.html">Catholic Religious Community Explorer</a>
+        </div>
+        <div class="menu-icon" onclick="toggleMenu()">☰</div>
+        <nav class="nav-links" id="navLinks">
+            <a href="about.html">About</a>
+            <a href="https://arcg.is/1GTirb0">Add/Update Data</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="content">
+            <h1>Welcome to the Catholic Religious Communities Explorer (CRCE)!</h1>
+            <p>We hope you find this website an insightful source of information for locating religious communities in your area.</p>
+            <p>Some of you may be wondering: what exactly is a religious community? Isn't that just like a church? Well, sort of. If you are a practicing Catholic, you have likely interacted with what we know as diocesan priests. These are men who have been called to serve their vocation in a specific diocese and parish community.</p>
+            <p>In many ways all Catholic priests are the same. Each priest has gone through years of education and preparation at a seminary before his ordination. All priests are ordained to preach the Gospel and serve God’s people in the person of Christ – that is, standing in for Christ. Most importantly, they administer the sacraments of the church to the faithful and help them get to heaven.</p>
+            <p>The differences between a diocesan priest and a priest from a religious order are distinguished by contrasting the vows made by religious priests and the promises made by diocesan priests.</p>
+            <p>A diocesan priest will make three promises to the church standing before his bishop. He promises to pray daily the Liturgy of the Hours, which include passages from the psalms and Scripture. This is to keep him very close to God. Secondly, the diocesan priest promises to obey and be loyal to his bishop. His bishop guides the priest and the priest ministers where the bishop asks him to serve. He does not represent the church differently than his bishop would. Thirdly, the priest promises to live a celibate life so that he can completely give his own life to Christ, the church–the people whom he has been called to serve. God gives him special graces to live this calling.</p>
+            <p>The diocesan priest lives and works in a certain geographical area called a diocese. Most often, a diocesan priest is assigned to a parish by the bishop, and he lives and works in that area. He does not make a promise of poverty, and usually owns a car and other possessions in order to fulfill his duties and live independently. His main work is preaching the Gospel, offering Mass, anointing the sick and dying, baptizing, celebrating marriages, burying the dead and consoling those who need his help. He is focused on the needs of those in his parish.</p>
+            <p>In contrast, a religious priest makes three solemn vows even before he is ordained. He vows poverty. He owns nothing or very little, and shares things in common with others in his community–such as a place to live and a car. He vows obedience to his religious superior who may ask him to minister far away or have a particular role in the community. Finally, the religious priest vows chastity, which, like the diocesan priest, means he will not get married.</p>
+            <p>These three vows–poverty, chastity and obedience–are called the “evangelical counsels.” Interestingly, the Catechism teaches that every Christian is called to live the counsels to some degree, though religious priests live them in a “more intimate” way. (CCC #916)</p>
+            <p>The religious priest chooses a religious community based on its lifestyle or charism and mission. Some communities live very austerely while others do not. Some have missions with the elderly, youth or the poor. Some serve as teachers in schools or evangelists in other countries. Some are contemplatives or silent. Most often they live in community with each other instead of among people in a parish.</p>
+            <p>Thank you again for choosing to make use of this site! We hope it can bring some value to your religious life.</p>
+            <p>Interested in becoming a volunteer and helping maintain this ever-growing database of religious communities across the US? Fill out the information below to learn more! Don't worry - signing up as a volunteer is in no way a strict obligation, and you can choose to dedicate as little or as much time as you would like to helping out, though we do ask that volunteers be able to continually keep track of at least one religious community regarding any potential changes.</p>
+            <p>Thanks!</p>
+            
+            <div class="contact-form">
+                <h2>Volunteer Signup</h2>
+                <form action="submit_form.php" method="post">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                    
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                    
+                    <label for="message">Message:</label>
+                    <textarea id="message" name="message" rows="4" required></textarea>
+                    
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
