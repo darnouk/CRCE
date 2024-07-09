@@ -6,26 +6,27 @@
     <title>Catholic Religious Communities Explorer</title>
     <link rel="stylesheet" href="https://js.arcgis.com/4.26/esri/themes/light/main.css">
     <style>
-        body {
+        body { /* no margin to maximize the view and also basic, readable arial font */
             margin: 0;
             font-family: Arial, sans-serif;
         }
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
+            display: flex; /* flexbox for easy alignment */
+            justify-content: space-between; /* space between logo and nav links */
+            align-items: center; /* centered vertically */
+            padding: 10px 20px; /* adding a little bit of padding for aesthetics */
+            background-color: #007bff; /* soft blue colored background */
+            color: white; /* text will be white */
         }
         .logo {
-            font-size: 1.5em;
-            font-weight: bold;
+            font-size: 1.5em; /* a bit larger font */
+            font-weight: bold; /* bold to make it easier to read */
         }
-        .logo a {
+        .logo a { /* not really necessary but just in case we want to style the link */
             text-decoration: none;
             color: white;
         }
+        /* navigation links styling */
         .nav-links {
             display: flex;
             gap: 15px;
@@ -35,12 +36,12 @@
             color: white;
             font-size: 1em;
         }
-        .menu-icon {
+        .menu-icon { /* hamburger menu icon for mobile users */
             display: none;
             font-size: 1.5em;
             cursor: pointer;
         }
-        @media (max-width: 600px) {
+        @media (max-width: 600px) { /* media query for responsive design */
             .nav-links {
                 display: none;
                 flex-direction: column;
@@ -59,7 +60,7 @@
         }
         .container {
             display: flex;
-            height: calc(100vh - 60px); /* Adjust based on header height */
+            height: calc(100vh - 60px); /* 100% height minus the header height */
         }
         #viewDiv {
             flex: 3;
@@ -72,6 +73,41 @@
             background-color: #f8f9fa;
             border-left: 1px solid #dee2e6;
             overflow-y: auto;
+        }
+        /* stylig for the filter section */
+        .filter-section {
+            margin-bottom: 20px;
+        }
+        .filter-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .filter-select {
+            width: 100%;
+            padding: 5px;
+            font-size: 1em;
+        }
+        /* styling for the results section */
+        .results-container {
+            margin-top: 20px;
+        }
+        .result-item {
+            padding: 10px;
+            border-bottom: 1px solid #dee2e6;
+            font-size: 1em;
+        }
+        .result-item strong {
+            display: block;
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+        .result-item a { /* the link will be a classic blue color */
+            color: #007bff;
+            text-decoration: none;
+        }
+        .result-item a:hover { /* and also underlined to indicate it's a link */
+            text-decoration: underline;
         }
     </style>
 
@@ -90,7 +126,7 @@
             "esri/layers/FeatureLayer"
         ], (esriConfig, Map, MapView, Locate, Search, FeatureLayer) => {
 
-            // setting the api key
+            // setting the api key to mine
             esriConfig.apiKey = "AAPK572c05ffa05d46a2aaf199b16ffb4221oE24c7wpfEvr0IwIzITaPNpdCYGeE71pjVNgO0grx1V-RUKdhR87ctV8qxm5rAB_";
 
             const map = new Map({
@@ -104,21 +140,21 @@
                 zoom: 4 // Zoom level
             });
 
-            const locateBtn = new Locate({
+            const locateBtn = new Locate({ // add locate widget button to map
                 view
             });
 
             view.ui.add(locateBtn, "top-left");
 
-            const search = new Search({
+            const search = new Search({ // add search widget to map
                 view
             });
 
             view.ui.add(search, {
-                position: "manual"
+                position: "manual" // added to a manual position defined below
             });
 
-            const featureLayer = new FeatureLayer({
+            const featureLayer = new FeatureLayer({ // adding the feature layer containing the data to the map
                 url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/survey123_944c918b0be1473582ade462dd792fe2/FeatureServer"
             });
 
@@ -127,37 +163,117 @@
             // Move the search widget to the search-container
             const searchContainer = document.querySelector('.search-container');
             searchContainer.appendChild(search.domNode);
+
+            // Filter functionality to filter by religious order
+            document.getElementById('filter-select').addEventListener('change', function(event) {
+                const selectedValue = event.target.value;
+                if (selectedValue === "all") {
+                    featureLayer.definitionExpression = "";
+                } else {
+                    featureLayer.definitionExpression = `religious_order = '${selectedValue}'`;
+                }
+            });
+
+            // Click event listener for feature layer
+            view.on("click", function(event) {
+                view.hitTest(event).then(function(response) {
+                    const results = response.results;
+                    if (results.length > 0 && results[0].graphic) {
+                        const attributes = results[0].graphic.attributes;
+                        console.log('Attributes:', attributes); // Detailed log of all attributes
+
+                        // Verify each attribute individually
+                        const communityName = attributes.community_name;
+                        const religiousOrder = attributes.religious_order;
+                        const communityWebsite = attributes.community_website;
+
+                        console.log('Community Name:', communityName); // Log Community Name
+                        console.log('Religious Order:', religiousOrder); // Log Religious Order
+                        console.log('Community Website:', communityWebsite); // Log Community Website
+
+                        // Ensure the retrieved attributes are not undefined or null
+                        const displayedCommunityName = communityName ? communityName : 'No Name';
+                        const displayedReligiousOrder = religiousOrder ? religiousOrder : 'No Order';
+                        const displayedCommunityWebsite = communityWebsite ? communityWebsite : 'No Website';
+
+                        // Create a div to show the results
+                        const resultDiv = document.createElement('div');
+                        resultDiv.className = 'result-item';
+                        resultDiv.innerHTML = `
+                            <strong>${displayedCommunityName}</strong><br>
+                            Order: ${displayedReligiousOrder}<br>
+                            Website: <a href="${displayedCommunityWebsite !== 'No Website' ? displayedCommunityWebsite : '#'}" target="_blank">${displayedCommunityWebsite}</a>
+                        `;
+
+                        // Clear previous results and add new results
+                        const previousResults = document.querySelector('.results-container');
+                        if (previousResults) {
+                            searchContainer.removeChild(previousResults);
+                        }
+
+                        const resultsContainer = document.createElement('div');
+                        resultsContainer.className = 'results-container';
+                        resultsContainer.appendChild(resultDiv);
+                        searchContainer.appendChild(resultsContainer);
+                    } else {
+                        console.log('No graphic found at the clicked location');
+                    }
+                }).catch(function(error) {
+                    console.error('Error in hitTest:', error);
+                });
+            });
+
         });
-    </script>
-</head>
-<body>
-    <header class="header">
-        <div class="logo">
-            <a href="https://darnouk.github.io/CRCE">Logo Placeholder</a>
-        </div>
-        <div class="menu-icon" onclick="toggleMenu()">☰</div>
-        <nav class="nav-links" id="navLinks">
-            <a href="https://darnouk.github.io/CRCE/about.html">About</a>
-            <a href="https://arcg.is/1GTirb0">Add/Update Data</a>
-        </nav>
-    </header>
 
-    <div class="container">
-        <div id="viewDiv"></div>
-        <div class="search-container">
-            <!-- The custom search elements are removed -->
-        </div>
-    </div>
-
-    <script>
-        function toggleMenu() {
-            var navLinks = document.getElementById("navLinks");
-            if (navLinks.style.display === "flex") {
+        function toggleMenu() { // function to toggle the menu on mobile
+            var navLinks = document.getElementById("navLinks"); // variable to store the nav links
+            if (navLinks.style.display === "flex") { // if the nav links are visible then hide them
                 navLinks.style.display = "none";
             } else {
                 navLinks.style.display = "flex";
             }
         }
     </script>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <a href="https://darnouk.github.io/CRCE">Catholic Religious Community Explorer</a>
+        </div>
+        <div class="menu-icon" onclick="toggleMenu()">☰</div> <!-- hamburger menu icon for mobile users -->
+        <nav class="nav-links" id="navLinks">
+            <a href="https://darnouk.github.io/CRCE/about.html">About</a> <!-- link to the about page -->
+            <a href="https://arcg.is/1GTirb0">Add/Update Data</a> <!-- link to the survey123 form -->
+        </nav>
+    </header>
+
+    <div class="container">
+        <div id="viewDiv"></div>
+        <div class="search-container">
+            <!-- filter menu for the religious orders in alphabetical order -->
+            <div class="filter-section">
+                <label for="filter-select" class="filter-label">Filter By:</label>
+                <select id="filter-select" class="filter-select">
+                    <option value="all">All</option>
+                    <option value="Augustinian">Augustinian</option>
+                    <option value="Barnabite">Barnabite</option>
+                    <option value="Benedictine">Benedictine</option>
+                    <option value="Camilian">Camilian</option>
+                    <option value="Capuchin Franciscan">Capuchin Franciscan</option>
+                    <option value="Carmelite">Carmelite</option>
+                    <option value="Carthusian">Carthusian</option>
+                    <option value="Cistercian">Cistercian</option>
+                    <option value="Conventual Franciscan">Conventual Franciscan</option>
+                    <option value="Dominican">Dominican</option>
+                    <option value="Franciscan">Franciscan</option>
+                    <option value="Jesuit">Jesuit</option>
+                    <option value="Mercedarian">Mercedarian</option>
+                    <option value="Servite">Servite</option>
+                    <option value="Trappist">Trappist</option>
+                    <option value="Trinitarian">Trinitarian</option>
+                </select>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
